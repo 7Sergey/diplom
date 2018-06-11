@@ -10,9 +10,6 @@ const userSchema = mongoose.Schema({
     },
     password: { type: String, required:true},
     username: { type: String, required:true, unique:true}
-}, {
-        versionKey: false,
-        collection: "UserModel"
-    });
+}, { versionKey: false, collection: "UserModel" });
 
 module.exports = mongoose.model('UserModel', userSchema);
