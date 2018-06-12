@@ -57,9 +57,9 @@ class Auth extends Component {
 
 
 class DashBoard extends Component {
-  state = {activeItem: 'profile'}
+  state = { activeItem: 'profile' }
 
-  handleItemClick = (e, { name }) => {this.setState({ activeItem: name }); this.props.history.push(`/${name}`);}
+  handleItemClick = (e, { name }) => { this.setState({ activeItem: name }); this.props.history.push(`/${name}`); }
 
   render() {
     const { activeItem } = this.state;
@@ -76,8 +76,11 @@ class DashBoard extends Component {
                 Profile
               </Menu.Item>
               <Menu.Item name='chats' active={activeItem === 'chats'} onClick={this.handleItemClick}>
-                Chats
+                Lessons
               </Menu.Item>
+              <Menu.Menu position='right'>
+                <Menu.Item name='Logout' active={activeItem === 'Logout'} onClick={this.props.signOut} />
+              </Menu.Menu>
             </Menu>
           </Grid.Column>
         </Grid.Row>
@@ -105,11 +108,11 @@ const Chat = () => (
 
 const AppRoute = (props) => (
   <div>
-    <Route exact path="/" component={Profile} {...props}/>
-    <Route exact path="/profile" component={Profile} {...props}/>
-    <Route path="/profile/:id" component={EditPresentation} {...props}/>    
-    <Route exact path="/chats" component={Chats} {...props}/> 
-    <Route exact path="/chats:id" component={Chat} {...props}/>           
+    <Route exact path="/" component={Profile} {...props} />
+    <Route exact path="/profile" component={Profile} {...props} />
+    <Route path="/profile/:id" component={EditPresentation} {...props} />
+    <Route exact path="/chats" component={Chats} {...props} />
+    <Route exact path="/chats:id" component={Chat} {...props} />
   </div>
 )
 
@@ -117,7 +120,7 @@ class App extends Component {
   state = { auth: false };
 
   onChange = (res) => this.setState({ ...res });
-
+  signOut = () => axios.get('/logout').then(res => this.setState({...res.data}))
   render() {
     const { auth } = this.state;
     return (
@@ -127,7 +130,7 @@ class App extends Component {
             {!auth
               ? <Auth onChange={this.onChange} />
               : <Route path="/" render={
-                (props) => <DashBoard {...props} {...this.state}><AppRoute {...this.state}/></DashBoard>
+                (props) => <DashBoard signOut={this.signOut} {...props} {...this.state}><AppRoute {...this.state} /></DashBoard>
               } />
             }
           </Grid.Column>

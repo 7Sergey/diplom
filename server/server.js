@@ -57,7 +57,16 @@ app.post('/api/new-user', (req, res) => {
 });
 
 app.get('/session', function (req, res) {
-    res.json({ auth: true, ...req.session.user });
+    if(req.session.user) {
+        res.json({ auth: true, ...req.session.user });
+    } else {
+        res.json({ auth: false });
+    }
+});
+
+app.get('/logout', function (req, res) {
+    req.session.user = null;
+    res.json({ auth: false });
 });
 
 app.post('/api/login', (req, res) => {
