@@ -70,7 +70,6 @@ class CreatePresentation extends Component {
                 onChange={(e, { value, name }) => this.onChange(value, name)}
               />
             </Form.Field>
-            {/* <FileUpload /> */}
             <Button type='submit' onClick={this.createPresentation}>Create</Button>
           </Form>
 

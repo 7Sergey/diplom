@@ -8,6 +8,7 @@ const io = require('socket.io')(server, { serveClient: true });
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const UserModel = require('./models/user.model');
+const LessonsModel = require('./models/lessons.model');
 const PresentationModel = require('./models/presentation.mode');
 const cookieSession = require('cookie-session');
 
@@ -98,11 +99,36 @@ app.post('/new-presentation', (req, res) => {
 });
 
 app.post('/user-presentation', (req, res) => {
+    console.log(req.body);
     PresentationModel.find({ userId: req.body._id })
     .then(pres => {
         res.json(pres);
     })
     .catch(err => console.log(err));
+});
+
+
+app.post('/user-lesson', (req, res) => { 
+    LessonsModel.find(req.body)
+    .then(less => {
+        res.json(less);
+    })
+    .catch(err => console.log(err));
+});
+
+app.post('/new-user-lesson', (req, res) => { 
+    LessonsModel.update({_id: req.body._id }, {$addToSet: {users: req.body.userId }})
+        .then(less => {
+            res.json(less);
+        })
+        .catch(err => console.log(err));
+});
+
+app.post('/new-lesson', (req, res) => {
+    const newLess = new LessonsModel(req.body).save();
+    return newLess.then(newLess => {
+        res.json({ ...newLess });
+    });
 });
 
 app.post('/save-presentation', (req, res) => {
@@ -115,9 +141,21 @@ app.post('/remove-presentation', (req, res) => {
     PresentationModel.findByIdAndRemove(req.body._id).then(pres => res.json(pres));
 });
 
+app.post('/get-lesson', (req, res) => {
+    LessonsModel.find({ _id: req.body._id })
+    .then(less => {
+        if(less[0]) {
+            res.json(less[0]);
+        }
+    })
+    .catch(err => console.log(err));
+});
+
 app.post('/get-presentation', (req, res) => {
+    console.log(req.body)
     PresentationModel.find({ _id: req.body._id })
     .then(pres => {
+        console.log(pres)
         if(pres[0]) {
             res.json(pres[0]);
         }

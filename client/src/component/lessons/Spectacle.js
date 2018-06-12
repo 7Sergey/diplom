@@ -28,50 +28,9 @@ import {
 import styled from 'react-emotion';
 import createTheme from "spectacle/lib/themes/default";
 
-const data = {
-  options: {
-    primary: "#fffaaa",
-    secondary: "green",
-    tertiary: "green",
-    quartenary: "blue"
-  },
-  title: 'slide',
-  description: 'description',
-  slides: [
-    {
-      name: 'slide 1',
-      number: 2,
-      data: [
-        { type: 'Heading', content: 'my Heading 3', textSize: 28, textAlign: 'left', src: '' },
-        { type: 'Image', content: 'my content', textSize: 28, textAlign: 'left', src: 'https://img.gazeta.ru/files3/647/3302647/tj.jpg' },
-        { type: 'Text', content: 'my Text', textSize: 12, textAlign: 'left', src: '' },
-      ]
-    },
-    {
-      name: 'slide 1',
-      number: 0,
-      data: [
-        { type: 'Heading', content: 'my Heading 1', textSize: 28, textAlign: 'left', src: '' },
-        { type: 'Text', content: 'my Text', textSize: 12, textAlign: 'right', src: '' },
-        { type: 'Image', content: 'my content', textSize: 28, textAlign: 'left', src: 'https://www.planwallpaper.com/static/images/colorful-nature-wallpaper.jpg' },
-      ]
-    },
-    {
-      name: 'slide 1',
-      number: 1,
-      data: [
-        { type: 'Image', content: 'my content ', textSize: 28, textAlign: 'left', src: 'https://img.gazeta.ru/files3/647/3302647/tj.jpg' },
-        { type: 'Heading', content: 'my Heading 2', textSize: 28, textAlign: 'center', src: '' },
-        { type: 'Text', content: 'my Text', textSize: 28, textAlign: 'left', src: '' },
-      ]
-    }
-  ]
-}
-
 class Spectacle extends Component {
   state = {
     activeSlide: 0,
-    data: data
   }
 
   setState(state, callback) {
@@ -80,28 +39,31 @@ class Spectacle extends Component {
   }
 
   theme = createTheme({
-    primary: this.state.data.options.primary,
-    secondary: this.state.data.options.secondary,
-    tertiary: this.state.data.options.tertiary,
-    quartenary: this.state.data.options.quartenary
+    primary: this.props.data.options.primary,
+    secondary: this.props.data.options.secondary,
+    tertiary: this.props.data.options.tertiary,
+    quartenary: this.props.data.options.quartenary
   }, {});
 
-  onActive = (activeIndex) => {
-    this.setState({ activeSlide: activeIndex });
+  componentWillMount() {
+    this.props.socket.on('active slide', (active) => this.setState({ activeSlide: active }, () => { this.onClick() }));
   }
 
-  onClick = (e) => {
-    e.preventDefault();
+  onActive = (activeIndex) => {
+    this.setState({ activeSlide: activeIndex }, () => this.props.socket.emit('active slide', { _id: this.props.lessonId }, activeIndex+1));
+  }
+
+  onClick = () => {
     document.getElementById("jump").click();
   }
 
   slides = () => {
     let template = [];
-    if (this.state.data.slides && this.state.data.slides.length > 0) {
-      this.state.data.slides.sort(function (a, b) {
+    if (this.props.data.slides && this.props.data.slides.length > 0) {
+      this.props.data.slides.sort(function (a, b) {
         return a.number - b.number;
       });
-      this.state.data.slides.map(item => {
+      this.props.data.slides.map(item => {
         let slide = [];
         if (item.data && item.data.length > 0) {
           item.data.map(content => {
@@ -144,4 +106,4 @@ class Spectacle extends Component {
   }
 }
 
-export default Profile;
+export default Spectacle;

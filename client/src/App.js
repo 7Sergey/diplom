@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Switch, Route } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import Profile from './component/profile';
+import Lessons from './component/lessons';
+import Lesson from './component/lessons/Lesson';
 import EditPresentation from './component/profile/EditPresentation';
 
 class Auth extends Component {
@@ -75,7 +77,7 @@ class DashBoard extends Component {
               >
                 Profile
               </Menu.Item>
-              <Menu.Item name='chats' active={activeItem === 'chats'} onClick={this.handleItemClick}>
+              <Menu.Item name='lessons' active={activeItem === 'lessons'} onClick={this.handleItemClick}>
                 Lessons
               </Menu.Item>
               <Menu.Menu position='right'>
@@ -94,25 +96,13 @@ class DashBoard extends Component {
   }
 }
 
-const Chats = () => (
-  <div>
-    Chats
-  </div>
-)
-
-const Chat = () => (
-  <div>
-    Chats + id
-  </div>
-)
-
 const AppRoute = (props) => (
   <div>
     <Route exact path="/" component={Profile} {...props} />
     <Route exact path="/profile" component={Profile} {...props} />
     <Route path="/profile/:id" component={EditPresentation} {...props} />
-    <Route exact path="/chats" component={Chats} {...props} />
-    <Route exact path="/chats:id" component={Chat} {...props} />
+    <Route exact path="/lessons" component={Lessons} {...props} />
+    <Route path="/lessons/:id" component={Lesson} {...props} />
   </div>
 )
 
